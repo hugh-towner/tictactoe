@@ -57,3 +57,88 @@ function checkWinner(){
         document.getElementById('message').innerHTML = "It's a draw!";
     }
 }
+
+conn = null
+
+function initialize(role) {
+    peer = new Peer();
+
+    peer.on('open', function (id) {
+        console.log('ID: ' + peer.id);
+
+        if (role == "host"){
+            alert("Game ID: " + peer.id);
+        } else if (role == "client"){
+        joinId = window.prompt("Enter the game ID");
+        join(joinId);
+        }
+
+
+    });
+    peer.on('connection', function (c) {
+        if (role == "client"){
+
+            c.on('open', function() {
+                c.send("Client does not accept incoming connections");
+                setTimeout(function() { c.close(); }, 500);
+            });
+
+            
+        } else if (role == "host"){
+            if (conn && conn.open) {
+                c.send("Already connected to another client");
+                return;
+            }
+
+            conn = c;
+            console.log("Connected to: " + conn.peer);
+            Ready();
+            
+        }
+    });
+    peer.on('disconnected', function () {
+        console.log('Connection lost. Please reconnect');
+
+        peer.reconnect();
+    });
+    peer.on('close', function() {
+        conn = null;
+        console.log('Connection destroyed');
+    });
+    peer.on('error', function (err) {
+        console.log(err);
+        alert('' + err);
+    });
+};
+
+function join(id) {
+    console.log("Joining: " + id);
+    if (conn) {
+        conn.close();
+    }
+
+    conn = peer.connect(id, {
+        reliable: true
+    });
+
+    conn.on('open', function () {
+        console.log("Connected to: " + conn.peer);
+        conn.send("testing")
+    });
+    conn.on('close', function () {
+    });
+};
+
+function Ready() {
+    console.log("Ready");
+    conn.on('data', function (data) {
+        console.log('Received', data);
+    });
+}
+
+
+if(window.location.hash) {
+    initialize("client");
+  } else {
+    initialize("host");   
+  }
