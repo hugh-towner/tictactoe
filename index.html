@@ -24,6 +24,18 @@
             <div class="box" id="box8" onclick="clickBox(8)"></div>
         </div>
     </div>
+    <div class="welcome">
+        <div class="options">
+            <button id="join" class="option" onclick="joinGame()">
+                Join Game
+            </button>
+            <button id="create" class="option" onclick="createGame()">
+                Create Game
+            </button>
+        </div>
+        <p id="current-game-id">Game ID not loaded...</p>
+       <input id="game-id" type="text" aria-label="ID to join" placeholder="Enter Game ID here">
+    </div>
     <button id="reset" onclick="resetGame()">Reset</button>
 </body>
 </html>

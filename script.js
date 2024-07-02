@@ -1,8 +1,12 @@
 const board = Array(9).fill('');
 let turn = 'x';
+playing = false;
+myID = null;
 
 
 function clickBox(boxNum){
+    if(!playing) return;
+
     if(document.getElementById('message').innerHTML.includes('wins') || document.getElementById('message').innerHTML.includes('draw')){
         resetGame();
         return;
@@ -67,7 +71,9 @@ function initialize(role) {
         console.log('ID: ' + peer.id);
 
         if (role == "host"){
-            alert("Game ID: " + peer.id);
+            myID = id;
+            document.getElementById("current-game-id").innerHTML = id;
+
         } else if (role == "client"){
         joinId = window.prompt("Enter the game ID");
         join(joinId);
@@ -137,8 +143,14 @@ function Ready() {
 }
 
 
-if(window.location.hash) {
-    initialize("client");
-  } else {
-    initialize("host");   
-  }
+// if(window.location.hash) {
+//     initialize("client");
+//   } else {
+//     initialize("host");   
+//   }
+
+function createGame(){
+    initialize("host");
+    document.getElementsByClassName("welcome")[0].classList.add("create");
+    document.getElementById('message').innerHTML = "Waiting for client to join...";
+}
